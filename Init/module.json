@@ -1,0 +1,34 @@
+{
+  "Okay": "4.5.3",
+  "version": "1.0.0",
+  "moduleName": "Delivery Filter",
+  "vendor": {
+    "email": "devsviat@proton.me",
+    "site": "https://github.com/devSviat"
+  },
+  "modifications": {
+    "backend": [
+      {
+        "file": "orders.tpl",
+        "changes": [
+          {
+            "find": "{if $labels}",
+            "appendBefore": "orders_delivery_select.tpl"
+          },
+          {
+            "find": "<form class=\"search\" method=\"get\">",
+            "prepend": "orders_search_delivery.tpl"
+          },
+          {
+            "find": "<form class=\"box_date_filter fn_date_filter",
+            "prepend": "orders_date_delivery.tpl"
+          },
+          {
+            "find": "<input name=\"keyword\" class=\"form-control\"",
+            "replace": "<input name=\"keyword\" class=\"form-control\" placeholder=\"{$btr->sviat__delivery_filter__search_placeholder|escape}\" type=\"text\" value=\"{$keyword|escape}\" >"
+          }
+        ]
+      }
+    ]
+  }
+}
