@@ -64,12 +64,14 @@ class ModuleFilesTest extends TestCase
         self::assertSame([], $hits);
     }
 
-    /** Без таблиць, налаштувань і типу модуля: увімкнути й вимкнути хаб можна будь-коли. */
+    /** Без таблиць, налаштувань і типу модуля: увімкнути й вимкнути хаб можна будь-коли. Лише посилання на інформаційну сторінку. */
     public function testInstallTouchesNothing(): void
     {
-        $install = new \ReflectionMethod(Init::class, 'install');
-        $body = implode('', array_slice(file(self::root() . '/Init/Init.php'), $install->getStartLine() - 1, $install->getEndLine() - $install->getStartLine() + 1));
-
-        self::assertStringNotContainsString('$this->', $body);
+        foreach (['install', 'update_1_1_0'] as $method) {
+            $reflection = new \ReflectionMethod(Init::class, $method);
+            $body = implode('', array_slice(file(self::root() . '/Init/Init.php'), $reflection->getStartLine() - 1, $reflection->getEndLine() - $reflection->getStartLine() + 1));
+            self::assertSame(1, substr_count($body, '$this->'), $method);
+            self::assertStringContainsString("\$this->setBackendMainController('DeliveryFilterAdmin');", $body, $method);
+        }
     }
 }

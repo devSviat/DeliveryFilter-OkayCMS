@@ -3,16 +3,28 @@
 namespace Okay\Modules\Sviat\DeliveryFilter;
 
 use Okay\Core\Design;
+use Okay\Core\EntityFactory;
 use Okay\Core\OkayContainer\Reference\ServiceReference as SR;
 use Okay\Core\Modules\Modules;
 use Okay\Core\Request;
+use Okay\Core\Settings;
+use Okay\Modules\Sviat\DeliveryFilter\Backend\HubAdapters;
 use Okay\Modules\Sviat\DeliveryFilter\Extenders\BackendExtender;
 use Okay\Modules\Sviat\DeliveryFilter\Helpers\DeliveryFilterHelper;
+use Okay\Modules\Sviat\DeliveryFilter\Helpers\HiddenCarriers;
 use Okay\Modules\Sviat\DeliveryFilter\Helpers\Redirector;
 
 return [
     DeliveryFilterHelper::class => [
         'class' => DeliveryFilterHelper::class,
+    ],
+    HubAdapters::class => [
+        'class' => HubAdapters::class,
+        'arguments' => [new SR(EntityFactory::class), new SR(Modules::class)],
+    ],
+    HiddenCarriers::class => [
+        'class' => HiddenCarriers::class,
+        'arguments' => [new SR(Settings::class)],
     ],
     Redirector::class => [
         'class' => Redirector::class,
@@ -25,6 +37,7 @@ return [
             new SR(Design::class),
             new SR(Redirector::class),
             new SR(Modules::class),
+            new SR(HiddenCarriers::class),
         ],
     ],
 ];

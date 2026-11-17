@@ -8,6 +8,7 @@ use Okay\Core\Modules\Modules;
 use Okay\Core\Request;
 use Okay\Modules\Sviat\DeliveryFilter\Helpers\DeliveryFilterHelper;
 use Okay\Modules\Sviat\DeliveryFilter\Helpers\DeliveryStatusParam;
+use Okay\Modules\Sviat\DeliveryFilter\Helpers\HiddenCarriers;
 use Okay\Modules\Sviat\DeliveryFilter\Helpers\Redirector;
 
 class BackendExtender implements ExtensionInterface
@@ -18,6 +19,7 @@ class BackendExtender implements ExtensionInterface
         private readonly Design $design,
         private readonly Redirector $redirector,
         private readonly Modules $modules,
+        private readonly HiddenCarriers $hidden,
     ) {
     }
 
@@ -27,7 +29,7 @@ class BackendExtender implements ExtensionInterface
         if (!is_array($filter) || !$this->enabled()) {
             return $filter;
         }
-        $filters = $this->helper->sanitizedFilters();
+        $filters = $this->hidden->visible($this->helper->sanitizedFilters());
         $raw = $this->request->get(DeliveryStatusParam::NAME);
         $selected = DeliveryStatusParam::parse($raw, $filters);
         if (($raw === null || $raw === '') && $this->request->method('get')) {
@@ -59,7 +61,7 @@ class BackendExtender implements ExtensionInterface
                 unset($countFilter['keyword']);
             }
         }
-        $selected = DeliveryStatusParam::parse($this->request->get(DeliveryStatusParam::NAME), $this->helper->sanitizedFilters());
+        $selected = DeliveryStatusParam::parse($this->request->get(DeliveryStatusParam::NAME), $this->hidden->visible($this->helper->sanitizedFilters()));
 
         return $selected === null ? $countFilter : $this->helper->filterByDeliveryStatus($countFilter, ...$selected);
     }

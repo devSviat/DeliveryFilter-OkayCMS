@@ -8,8 +8,10 @@ require_once __DIR__ . '/FakeCarriers.php';
 use Okay\Core\Design;
 use Okay\Core\Modules\Extender\ChainExtender;
 use Okay\Core\Modules\Modules;
+use Okay\Core\Settings;
 use Okay\Modules\Sviat\DeliveryFilter\Extenders\BackendExtender;
 use Okay\Modules\Sviat\DeliveryFilter\Helpers\DeliveryFilterHelper;
+use Okay\Modules\Sviat\DeliveryFilter\Helpers\HiddenCarriers;
 use Okay\Modules\Sviat\DeliveryFilter\Helpers\Redirector;
 use PHPUnit\Framework\TestCase;
 
@@ -24,6 +26,8 @@ abstract class HubTestCase extends TestCase
     /** @var list<string> */
     protected array $redirects = [];
     protected bool $hubEnabled = true;
+    /** Збережене значення налаштування прихованих перевізників (JSON), як його пише сторінка модуля. */
+    protected ?string $hiddenSetting = null;
 
     private const array TRIGGERS = ['findDeliveryStatusFilters', 'filterByDeliveryStatus', 'findOrderIdsByShipmentNumber'];
 
@@ -75,6 +79,9 @@ abstract class HubTestCase extends TestCase
         $modules = $this->createStub(Modules::class);
         $modules->method('isActiveModule')->willReturnCallback(fn($vendor, $name): bool => $vendor === 'Sviat' && $name === 'DeliveryFilter' && $this->hubEnabled);
 
-        return new BackendExtender(new DeliveryFilterHelper(), new RequestStub([], $get, $method), $design, $redirector, $modules);
+        $settings = $this->createStub(Settings::class);
+        $settings->method('get')->willReturnCallback(fn(string $name): ?string => $name === HiddenCarriers::SETTING ? $this->hiddenSetting : null);
+
+        return new BackendExtender(new DeliveryFilterHelper(), new RequestStub([], $get, $method), $design, $redirector, $modules, new HiddenCarriers($settings));
     }
 }
