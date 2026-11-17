@@ -1,0 +1,7 @@
+.df-carrier { padding: 12px 0; border-top: 1px solid var(--ok-border, #e4e7eb); }
+.heading_box + .df-carrier { border-top: 0; }
+.df-carrier__head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 4px; }
+.df-carrier__group { margin-top: 4px; overflow-wrap: anywhere; }
+.df-carrier__toggles { margin-left: auto; display: flex; flex-wrap: wrap; gap: 12px; }
+.df-carrier__switch { display: inline-flex; align-items: center; gap: 8px; margin: 0; cursor: pointer; }
+.df-carrier__buttons { padding-top: 12px; display: flex; justify-content: flex-end; }

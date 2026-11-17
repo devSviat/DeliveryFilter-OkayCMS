@@ -16,7 +16,7 @@ class TemplateEscapeTest extends TestCase
     {
         $root = dirname((string)new \ReflectionClass(Init::class)->getFileName(), 2);
         $files = glob($root . '/Backend/design/html/*.tpl');
-        self::assertCount(3, $files);
+        self::assertCount(4, $files);
         $sources = array_combine(array_map('basename', $files), array_map('file_get_contents', $files));
         foreach (json_decode((string)file_get_contents($root . '/Init/module.json'), true)['modifications']['backend'] ?? [] as $modification) {
             foreach ($modification['changes'] as $i => $change) {
